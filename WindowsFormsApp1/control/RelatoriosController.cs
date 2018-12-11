@@ -16,10 +16,15 @@ namespace WindowsFormsApp1
             
             try
             {
+                
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
+                
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
 
-                MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE data_completa LIKE '%" + comboBoxMes.Text + "/" + comboBoxAno.Text +"' ORDER BY 'data_completa'.'id' DESC,ASC", conn);
+                MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE data_completa LIKE '%" + comboBoxMes.Text + "/" + comboBoxAno.Text + "' ORDER BY data_completa DESC", conn);
                 MySqlDataReader reader;
                 reader = bdcommand.ExecuteReader();
                 listView.Items.Clear();
@@ -59,9 +64,12 @@ namespace WindowsFormsApp1
                 try
                 {
                     MySqlConnection conn = conexao.conectarBD();
-                    conn.Open();
+                    if (!conn.Ping())
+                    {
+                        conn.Open();
+                    }
 
-                    MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE data_completa LIKE '%/%/"+comboBoxAno.Text+"' ORDER BY data_completa DESC", conn);
+                    MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE data_completa LIKE '%/%/"+comboBoxAno.Text+ "' ORDER BY SUBSTR(data_completa, 6, 4) DESC, SUBSTR( data_completa, 4, 2) DESC, SUBSTR( data_completa, 1, 2) DESC", conn);
                     MySqlDataReader reader;
                     reader = bdcommand.ExecuteReader();
                     listView.Items.Clear();
@@ -99,14 +107,17 @@ namespace WindowsFormsApp1
 
             String mes = DateTime.Now.Month.ToString().ToUpper();
             String ano = DateTime.Now.Year.ToString().ToUpper();
-            String data = "/"+ mes + "/" + ano;
+            String data = mes + "/" + ano;
 
             try
             {
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
 
-                MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE data_completa LIKE '%" + data + "' ORDER BY data_completa DESC", conn);
+                MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE data_completa LIKE '%/" + data + "' ORDER BY data_completa DESC", conn);
                 MySqlDataReader reader;
                 reader = bdcommand.ExecuteReader();
                 listView.Items.Clear();
@@ -138,13 +149,22 @@ namespace WindowsFormsApp1
          */
         public void selectRelatoriosCompleto(ListView listView)
         {
+
             try
             {
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
-                MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos ORDER BY data_completa DESC", conn);
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
+                //MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE data_completa LIKE '%/'ORDER BY data_completa DESC", conn);
+                //Basicamente, estamos dizendo via ORDER BY: "ordene por Ano, depois pelo Mês, e por fim pelo Dia".
+                //SUBSTR(string, inicio, qtd) extrai o pedaço da string começando por "inicio" e pegando "qtd" caracteres.
+
+                MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos ORDER BY SUBSTR(data_completa, 6, 4) DESC, SUBSTR( data_completa, 4, 2) DESC, SUBSTR( data_completa, 1, 2) DESC ", conn);
+                //MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos ORDER BY data_completa DESC ", conn);
                 MySqlDataReader reader;
-                reader = bdcommand.ExecuteReader();
+                reader = bdcommand.ExecuteReader(); 
                 listView.Items.Clear();
                 while (reader.Read())
                 {
@@ -156,7 +176,7 @@ namespace WindowsFormsApp1
                         reader.GetString(3).ToString(), // valor
                         reader.GetString(4).ToString(), // forma_pagamento
                         reader.GetString(5).ToString(),  // observacoes
-                        reader.GetString(6).ToString() // hora
+                        //reader.GetString(6).ToString() // hora
                         
                     }));
                 }
@@ -182,7 +202,10 @@ namespace WindowsFormsApp1
                 try
                 {
                     MySqlConnection conn = conexao.conectarBD();
-                    conn.Open();
+                    if (!conn.Ping())
+                    {
+                        conn.Open();
+                    }
                     MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE " +
                         "nome_pet LIKE '%" + textoParaPesquisa.Text.ToUpper() + "%' OR " +
                         "nome_proprietario LIKE '%" + textoParaPesquisa.Text.ToUpper() + "%' OR " +
@@ -231,7 +254,10 @@ namespace WindowsFormsApp1
                 try
                 {
                     MySqlConnection conn = conexao.conectarBD();
-                    conn.Open();
+                    if (!conn.Ping())
+                    {
+                        conn.Open();
+                    }
                     MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE " +
                         "nome_pet LIKE '%" + textoParaPesquisa1.Text.ToUpper() + "%' OR " +
                         "nome_pet LIKE '%" + textoParaPesquisa2.Text.ToUpper() + "%' OR " +
@@ -291,7 +317,10 @@ namespace WindowsFormsApp1
                 try
                 {
                     MySqlConnection conn = conexao.conectarBD();
-                    conn.Open();
+                    if (!conn.Ping())
+                    {
+                        conn.Open();
+                    }
                     MySqlCommand bdcommand = new MySqlCommand("SELECT * FROM tb_servicos WHERE nome_pet = '" + nomePet + "' AND nome_proprietario = '" + nomePro + "'", conn);
                     MySqlDataReader reader;
                     reader = bdcommand.ExecuteReader();

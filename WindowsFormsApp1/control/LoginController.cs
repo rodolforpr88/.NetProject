@@ -10,8 +10,18 @@ namespace WindowsFormsApp1
 {
     class LoginController
     {
-
-      
-
+        public bool habilitarDatePickerADM(Usuario usuario, bool adm, DateTimePicker dateTimePicker)
+        {
+            if (usuario.Login == "ADMIN")
+            {
+                adm = true;
+                dateTimePicker.Visible = true;
+            }
+            else
+            {
+                adm = false;
+            }
+            return adm;
+        }   
     }
 }

@@ -25,7 +25,10 @@ namespace WindowsFormsApp1
                     dia = dia.Insert(0, "0");
                 }
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
                 MySqlCommand bdcommand = new MySqlCommand("INSERT INTO tb_servicos " +
                     "(nome_pet," +
                     "nome_proprietario," +
@@ -40,7 +43,7 @@ namespace WindowsFormsApp1
                     "/" + ano + "')", conn);
                 bdcommand.Parameters.Add("@nome_pet", MySqlDbType.Text).Value = servicoParaIncluir.Nome_pet.ToUpper();
                 bdcommand.Parameters.Add("@nome_proprietario", MySqlDbType.Text).Value = servicoParaIncluir.Nome_proprietario.ToUpper();
-                bdcommand.Parameters.Add("@valor", MySqlDbType.Text).Value = servicoParaIncluir.Valor.ToUpper(); ;
+                bdcommand.Parameters.Add("@valor", MySqlDbType.Text).Value = servicoParaIncluir.Valor.ToUpper();
                 bdcommand.Parameters.Add("@forma_pagamento", MySqlDbType.Text).Value = servicoParaIncluir.Forma_pagamento.ToUpper();
                 bdcommand.Parameters.Add("@observacoes", MySqlDbType.Text).Value = servicoParaIncluir.Observacoes.ToUpper();
 
@@ -66,7 +69,10 @@ namespace WindowsFormsApp1
             {
                 String hora = DateTime.Now.Hour.ToString();
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
                 MySqlCommand bdcommand = new MySqlCommand("INSERT INTO tb_servicos " +
                     "(nome_pet," +
                     "nome_proprietario," +
@@ -77,7 +83,7 @@ namespace WindowsFormsApp1
                     "data_completa) VALUES (?,?,?,?,?,?,?)", conn);
                 bdcommand.Parameters.Add("@nome_pet", MySqlDbType.Text).Value = servicoParaIncluir.Nome_pet.ToUpper();
                 bdcommand.Parameters.Add("@nome_proprietario", MySqlDbType.Text).Value = servicoParaIncluir.Nome_proprietario.ToUpper();
-                bdcommand.Parameters.Add("@valor", MySqlDbType.Text).Value = servicoParaIncluir.Valor.ToUpper(); ;
+                bdcommand.Parameters.Add("@valor", MySqlDbType.Text).Value = servicoParaIncluir.Valor.ToUpper();
                 bdcommand.Parameters.Add("@forma_pagamento", MySqlDbType.Text).Value = servicoParaIncluir.Forma_pagamento.ToUpper();
                 bdcommand.Parameters.Add("@observacoes", MySqlDbType.Text).Value = servicoParaIncluir.Observacoes.ToUpper();
                 bdcommand.Parameters.Add("@hora", MySqlDbType.Text).Value = servicoParaIncluir.Hora.ToUpper();
@@ -112,7 +118,10 @@ namespace WindowsFormsApp1
                 servicoParaIncluir.Valor = Util.trocarDigitos(textoValor);
 
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
                 MySqlCommand bdcommand = new MySqlCommand("INSERT INTO tb_servicos " +
                     "(nome_pet," +
                     "nome_proprietario," +
@@ -123,7 +132,7 @@ namespace WindowsFormsApp1
                     "data_completa) VALUES (?,?,?,?,?,?,?)", conn);
                 bdcommand.Parameters.Add("@nome_pet", MySqlDbType.Text).Value = servicoParaIncluir.Nome_pet.ToUpper();
                 bdcommand.Parameters.Add("@nome_proprietario", MySqlDbType.Text).Value = servicoParaIncluir.Nome_proprietario.ToUpper();
-                bdcommand.Parameters.Add("@valor", MySqlDbType.Text).Value = servicoParaIncluir.Valor.ToUpper(); ;
+                bdcommand.Parameters.Add("@valor", MySqlDbType.Text).Value = servicoParaIncluir.Valor.ToUpper();
                 bdcommand.Parameters.Add("@forma_pagamento", MySqlDbType.Text).Value = servicoParaIncluir.Forma_pagamento.ToUpper();
                 bdcommand.Parameters.Add("@observacoes", MySqlDbType.Text).Value = servicoParaIncluir.Observacoes.ToUpper();
                 bdcommand.Parameters.Add("@hora", MySqlDbType.Text).Value = servicoParaIncluir.Hora.ToUpper();
@@ -152,7 +161,10 @@ namespace WindowsFormsApp1
                 String hora = DateTime.Now.Hour.ToString().ToUpper() + ":" + DateTime.Now.Minute.ToString().ToUpper();
 
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
                 MySqlCommand bdcommand = new MySqlCommand("UPDATE tb_servicos SET " +
                     "nome_pet = '" + servicoParaEditar.Nome_pet.ToUpper() +"', "+
                     "nome_proprietario = '" + servicoParaEditar.Nome_proprietario.ToUpper() + "', "+
@@ -182,7 +194,10 @@ namespace WindowsFormsApp1
             try
             {
                 MySqlConnection conn = conexao.conectarBD();
-                conn.Open();
+                if (!conn.Ping())
+                {
+                    conn.Open();
+                }
                 MySqlCommand bdcommand = new MySqlCommand("DELETE FROM tb_servicos WHERE id = "+ idParaExcluir+ "",conn);
 
                 bdcommand.ExecuteNonQuery();
@@ -213,7 +228,10 @@ namespace WindowsFormsApp1
                 try
                 {
                     MySqlConnection conn = conexao.conectarBD();
-                    conn.Open();
+                    if (!conn.Ping())
+                    {
+                        conn.Open();
+                    }
                     if (nomePet.Text.ToUpper().Contains("S") || nomePet.Text.ToUpper().Contains("Z"))
                     {
                         // TROCAR OS DIGITOS DE "S" PARA "Z" E VISE VERSA CONFORME SOLICITADO PELO CLIENTE ****
@@ -264,7 +282,7 @@ namespace WindowsFormsApp1
         /*
          * [ INICIO ] DUPLO CLIQUE NA LISTVIEW E JOGA OS DADOS CLICADO NOS TEXTBOX's
          */
-        public void duploCliqueListaServico(ListView listViewEncontrados,TextBox txtnomePet,TextBox txtnomeProprietario,TextBox txtvalor, DateTimePicker dateTimePicker) {
+        public void duploCliqueListaServico(ListView listViewEncontrados,TextBox txtnomePet,TextBox txtnomeProprietario,TextBox txtvalor, DateTimePicker dateTimePicker, bool editarServico) {
             String nomePet = listViewEncontrados.SelectedItems[0].SubItems[0].Text;
             String nomePro = listViewEncontrados.SelectedItems[0].SubItems[1].Text;
             if (nomePet != "" && nomePro != "")
@@ -272,23 +290,30 @@ namespace WindowsFormsApp1
                 try
                 {
                     MySqlConnection conn = conexao.conectarBD();
-                    conn.Open();
+                    if (!conn.Ping())
+                    {
+                        conn.Open();
+                    }
                     MySqlCommand bdcommand = new MySqlCommand("SELECT nome_pet,nome_proprietario, data_completa " +
                                         "FROM tb_servicos WHERE nome_pet = '" + nomePet + "' AND nome_proprietario = '" + nomePro + "'", conn);
                     MySqlDataReader reader;
                     reader = bdcommand.ExecuteReader();
                     if (reader.Read())
                     {
+                        editarServico = true;
                         txtnomePet.Text = reader.GetString(0).ToString();
                         txtnomeProprietario.Text = reader.GetString(1).ToString();
+                        String date = DateTime.Now.Day.ToString() + "/" + DateTime.Now.Month.ToString() + "/" + DateTime.Now.Year.ToString();
+                        dateTimePicker.Value = DateTime.Parse(date);
+                        dateTimePicker.Visible = true;
                     }
                     reader.Close();
-                    listViewEncontrados.Visible = true;
+                    dateTimePicker.Visible = true;
                 }
                 catch (Exception error)
                 {
                     MessageBox.Show("Erro (duploCliqueListaServico): " + error);
-                    listViewEncontrados.Visible = false;
+                    dateTimePicker.Visible = false;
 
                 }
             }

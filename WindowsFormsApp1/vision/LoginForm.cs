@@ -38,7 +38,10 @@ namespace WindowsFormsApp1
                 if (textBox_login.Text != "" && textBox_senha.Text != "")
                 {
                     MySqlConnection conn = conexao.conectarBD();
-                    conn.Open();
+                    if (!conn.Ping())
+                    {
+                        conn.Open();
+                    }
                     MySqlCommand bdcommand = new MySqlCommand("SELECT login,senha FROM tb_usuarios WHERE login = '" +
                     textBox_login.Text.ToUpper() + "' AND senha = '" +
                     textBox_senha.Text.ToUpper() + "'", conn);

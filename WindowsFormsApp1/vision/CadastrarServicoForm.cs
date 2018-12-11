@@ -19,6 +19,7 @@ namespace WindowsFormsApp1
         Servico servico = new Servico();
         Usuario usuario = new Usuario();
         RelatoriosForm relatoriosForm = new RelatoriosForm();
+        LoginController loginController = new LoginController();
         bool editar_servico = false;
         bool variacao = false;
 
@@ -51,15 +52,20 @@ namespace WindowsFormsApp1
         */
         public CadastrarServicoForm(bool editar, Servico servicoParaReceberDeRelatorio)
         {
-            servico.Id = servicoParaReceberDeRelatorio.Id;
-            servico.Nome_pet = servicoParaReceberDeRelatorio.Nome_pet;
-            servico.Nome_proprietario = servicoParaReceberDeRelatorio.Nome_proprietario;
-            servico.Valor = servicoParaReceberDeRelatorio.Valor;
-            servico.Forma_pagamento = servicoParaReceberDeRelatorio.Forma_pagamento;
-            servico.Observacoes = servicoParaReceberDeRelatorio.Observacoes;
-            servico.Data = servicoParaReceberDeRelatorio.Data;
-            editar_servico = editar;
-            InitializeComponent();
+            
+                servico.Id = servicoParaReceberDeRelatorio.Id;
+                servico.Nome_pet = servicoParaReceberDeRelatorio.Nome_pet;
+                servico.Nome_proprietario = servicoParaReceberDeRelatorio.Nome_proprietario;
+                servico.Valor = servicoParaReceberDeRelatorio.Valor;
+                servico.Forma_pagamento = servicoParaReceberDeRelatorio.Forma_pagamento;
+                servico.Observacoes = servicoParaReceberDeRelatorio.Observacoes;
+                servico.Data = servicoParaReceberDeRelatorio.Data;
+                
+                editar_servico = editar;
+                InitializeComponent();
+            
+         
+            
         }
         /*
         * -------------------------------------------------------------------------------------------
@@ -94,7 +100,7 @@ namespace WindowsFormsApp1
                     String data = dateTimePicker_servico.Text.ToString();
                     servico.Nome_pet = textBox_nomePet.Text;
                     servico.Nome_proprietario = textBox_nomeProprietario.Text;
-                    servico.Valor = textBox_valor.Text;
+                    servico.Valor = Util.trocarDigitos(textBox_valor);
                     servico.Forma_pagamento = comboBox_formaPagamento.Text;
                     servico.Data = data;
                     servico.Hora = DateTime.Now.Hour.ToString()+":"+DateTime.Now.Minute.ToString();
@@ -116,7 +122,7 @@ namespace WindowsFormsApp1
 
             if (!cancelarRegistro)
             {
-                if (!editar_servico)
+                if (editar_servico)
                 {
                     if (usuario.Login != "ADMIN") {
                         textBox_valor.Text = Util.trocarDigitos(textBox_valor);
@@ -126,7 +132,7 @@ namespace WindowsFormsApp1
 
                             servico.Nome_pet = textBox_nomePet.Text;
                             servico.Nome_proprietario = textBox_nomeProprietario.Text;
-                            servico.Valor = textBox_valor.Text;
+                            servico.Valor = Util.trocarDigitos(textBox_valor);
                             servico.Forma_pagamento = comboBox_formaPagamento.Text;
                             servico.Observacoes = textBox_observacoes.Text;
                             servico.Hora = DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString();
@@ -143,16 +149,22 @@ namespace WindowsFormsApp1
                         {
                             textBox_valor.Text = Util.trocarDigitos(textBox_valor);
 
+
                             if (Util.validarCampos(textBox_nomePet, textBox_nomeProprietario, textBox_valor, comboBox_formaPagamento))
                             {
                                 String data = dateTimePicker_servico.Text.ToString();
                                 servico.Nome_pet = textBox_nomePet.Text;
                                 servico.Nome_proprietario = textBox_nomeProprietario.Text;
-                                servico.Valor = textBox_valor.Text;
+                                servico.Valor = Util.trocarDigitos(textBox_valor);
                                 servico.Forma_pagamento = comboBox_formaPagamento.Text;
                                 servico.Data = data;
                                 servico.Observacoes = textBox_observacoes.Text;
-                                servico.Hora = DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString();
+                                String segundos = DateTime.Now.Minute.ToString();
+                                if (segundos.Length == 1)
+                                {
+                                    segundos = segundos.Insert(0, "0");
+                                }
+                                servico.Hora = DateTime.Now.Hour.ToString() + ":" + segundos;
                                 servicosController.SalvarServicoADM(servico);
                                 limparCampos();
                                 dateTimePicker_servico.Enabled = true;
@@ -163,6 +175,32 @@ namespace WindowsFormsApp1
                                 textBox_nomePet.Focus();
                             }
                         }
+                    }
+                } else if (!editar_servico && usuario.Login == "ADMIN")
+                {
+                    if (Util.validarCampos(textBox_nomePet, textBox_nomeProprietario, textBox_valor, comboBox_formaPagamento))
+                    {
+                        String data = dateTimePicker_servico.Text.ToString();
+                        servico.Nome_pet = textBox_nomePet.Text;
+                        servico.Nome_proprietario = textBox_nomeProprietario.Text;
+                        servico.Valor = Util.trocarDigitos(textBox_valor);
+                        servico.Forma_pagamento = comboBox_formaPagamento.Text;
+                        servico.Data = data;
+                        servico.Observacoes = textBox_observacoes.Text;
+                        String segundos = DateTime.Now.Minute.ToString();
+                        if (segundos.Length == 1)
+                        {
+                            segundos = segundos.Insert(0, "0");
+                        }
+                        servico.Hora = DateTime.Now.Hour.ToString() + ":" + segundos;
+                        servicosController.SalvarServicoADM(servico);
+                        limparCampos();
+                        dateTimePicker_servico.Enabled = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Os campos devem ser preenchidos com excessão do campo 'Observações'.");
+                        textBox_nomePet.Focus();
                     }
                 }
             }
@@ -193,7 +231,9 @@ namespace WindowsFormsApp1
                 textBox_nomePet,
                 textBox_nomeProprietario,
                 textBox_valor,
-                dateTimePicker_servico);
+                dateTimePicker_servico,
+                editar_servico);
+
             comboBox_formaPagamento.Focus();
         }
         /*
@@ -227,13 +267,7 @@ namespace WindowsFormsApp1
         private void CadastrarServicoForm_Load(object sender, EventArgs e)
         {
             bool adm = false;
-            if (usuario.Login == "ADMIN")
-            {
-                adm = true;
-                dateTimePicker_servico.Visible = true;
-            }  else {
-                adm = false;
-            }
+            adm = loginController.habilitarDatePickerADM(usuario, adm, dateTimePicker_servico);
             if (editar_servico)
             {
                 textBox_nomePet.Text = servico.Nome_pet;
@@ -245,7 +279,6 @@ namespace WindowsFormsApp1
                 dateTimePicker_servico.Value = DateTime.Parse(servico.Data);
                 dateTimePicker_servico.Visible = true;
             }
-            
             if (editar_servico && adm)
             {
                 dateTimePicker_servico.Visible = true;
@@ -254,7 +287,7 @@ namespace WindowsFormsApp1
                 String date = DateTime.Now.Day.ToString()+"/"+ DateTime.Now.Month.ToString() + "/" + DateTime.Now.Year.ToString();
                 dateTimePicker_servico.Value = DateTime.Parse(date);
                 dateTimePicker_servico.Visible = true;
-            } else
+            } else if (!adm && !editar_servico)
             {
                 dateTimePicker_servico.Visible = false;
             }
@@ -341,7 +374,8 @@ namespace WindowsFormsApp1
                 textBox_nomePet,
                 textBox_nomeProprietario,
                 textBox_valor,
-                dateTimePicker_servico);
+                dateTimePicker_servico,
+                editar_servico);
                 comboBox_formaPagamento.Focus();
             }
         }
@@ -356,8 +390,9 @@ namespace WindowsFormsApp1
         }
         
         /*
-* -----------------------------------------------------------
-*/
+        * -----------------------------------------------------------
+        */
+
     }
 
 }

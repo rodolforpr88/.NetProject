@@ -35,7 +35,7 @@ namespace WindowsFormsApp1
         // BOTÃO PARA GERAR RELATORIO NO EXCEL
         private void button_relatorioExcel_Click(object sender, EventArgs e)
         {
-
+            textBox_textoPesquisa.Text = "";
             Util.gerarExcel(listView_servicos);
         }
         /*
@@ -49,6 +49,7 @@ namespace WindowsFormsApp1
             {
                 if (int.Parse(comboBox_ano.Text) >= 2018 && int.Parse(comboBox_ano.Text) <= 2050)
                 {
+                    textBox_textoPesquisa.Text = "";
                     relatoriosController.selecionarPorMes(listView_servicos, comboBox_mes, comboBox_ano); 
                 }
                 else
@@ -72,7 +73,9 @@ namespace WindowsFormsApp1
         {
             if (int.Parse(comboBox_ano.Text) >= 2018 && int.Parse(comboBox_ano.Text) <= 2050)
             {
+                textBox_textoPesquisa.Text = "";
                 relatoriosController.selecionarPorAno(listView_servicos, comboBox_ano);
+                
             } else
             {
                 MessageBox.Show("O valor do ano deve ser digitado entre 2018-2050");
@@ -155,8 +158,8 @@ namespace WindowsFormsApp1
         {
             
             duploCliqueEdicao(listView_servicos, servico);
-            bool editar = true;
-            CadastrarServicoForm cadastrarServicoForm = new CadastrarServicoForm(editar, servico);
+            bool editar_servico = true;
+            CadastrarServicoForm cadastrarServicoForm = new CadastrarServicoForm(editar_servico, servico);
             cadastrarServicoForm.ShowDialog();
         }
         /*

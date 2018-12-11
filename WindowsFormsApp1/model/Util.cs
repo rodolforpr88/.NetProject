@@ -54,7 +54,7 @@ namespace WindowsFormsApp1
                             ws.Cells[i, 9] = item.SubItems[4].Text;
                             ws.Cells[i, 12] = item.SubItems[5].Text;
                             ws.Cells[i, 15] = item.SubItems[6].Text;
-                            ws.Cells[i, 18] = item.SubItems[1].Text;
+                            ws.Cells[i, 18] = DateTime.Parse(item.SubItems[1].Text.ToString());
                             //ws.Cells[i, 21] = item.SubItems[6].Text;
                             i++;
                         }
@@ -124,6 +124,10 @@ namespace WindowsFormsApp1
 
             if (!textBoxvalor.Text.Contains(','))
             {
+                if (quant == 1) {
+                    valor1 = textBoxvalor.Text;
+                    valor1 = valor1.Insert(1, ",00");
+                }
                 if (quant == 2 || quant == 3)
                 {
                     valor1 = textBoxvalor.Text + ",00";
